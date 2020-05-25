@@ -1,1 +1,94 @@
 SQL Funnel Analyse
+
+#Quiz Funnel Analyse
+ SELECT COUNT(DISTINCT user_Id) AS 'User_Amount', question
+ FROM survey
+ GROUP BY question;
+ 
+
+ SELECT 1.0 * 475/500 AS 'Step_1_2',
+ 1.0 * 380/475 AS 'Step_2_3',
+ 1.0 * 361/380 AS 'Step_3_4',
+ 1.0 * 270/361 AS 'Step_4_5';
+ 
+ SELECT COUNT(user_id)
+ FROM survey
+ WHERE question IS NOT NULL
+ GROUP BY question;
+ 
+ SELECT *
+ FROM quiz
+ LIMIT 5;
+ 
+ SELECT *
+ FROM home_try_on
+ LIMIT 5;
+ 
+ SELECT *
+ FROM purchase
+ LIMIT 5;
+ 
+WITH funnel AS (SELECT b.user_id,
+ c.address IS NOT NULL AS 'is_home_try_on',
+ c.number_of_pairs,
+ d.product_id IS NOT NULL AS 'is_purchase'
+FROM quiz AS 'b'
+ LEFT JOIN home_try_on AS 'c'
+  ON c.user_id = b.user_id
+ LEFT JOIN purchase AS 'd'
+  ON d.user_id = c.user_id)
+SELECT COUNT(user_id) AS 'number_participants',
+SUM(is_home_try_on) AS 'number_of_provants',
+SUM(is_purchase) AS 'number_of_purchase',
+ 1.0 * SUM(is_home_try_on)/ COUNT(user_id) AS 'survey_to_prove',
+ 1.0 * SUM(is_purchase)/ SUM(is_home_try_on) AS 'prove_to_survey',
+ 1.0 * SUM(is_purchase)/
+ COUNT(user_id)'Overall_Conversion'
+FROM funnel;
+
+WITH funnel AS (SELECT b.user_id,
+ c.address IS NOT NULL AS 'is_home_try_on',
+ c.number_of_pairs,
+ d.product_id IS NOT NULL AS 'is_purchase'
+FROM quiz AS 'b'
+ LEFT JOIN home_try_on AS 'c'
+  ON c.user_id = b.user_id
+ LEFT JOIN purchase AS 'd'
+  ON d.user_id = c.user_id)
+SELECT COUNT(number_of_pairs) AS 'number_participants',
+SUM(is_purchase) AS 'number_purchase',
+ROUND(1.0 * SUM(is_purchase)/ COUNT(number_of_pairs),2) AS 'conversion_5_and_3'
+FROM funnel
+GROUP BY number_of_pairs
+HAVING number_of_pairs IS NOT NULL;
+
+SELECT SUM(price)
+FROM purchase;
+
+SELECT *, 
+SUM(price) AS 'Revenue',
+ROUND(1.0 * SUM(price)/ 55795,2) AS '%Revenue'
+FROM purchase
+GROUP BY style
+ORDER BY SUM(price) DESC;
+
+SELECT *, 
+SUM(price) AS 'Revenue',
+ROUND(1.0 * SUM(price)/ 55795,2) AS '%Revenue'
+FROM purchase
+GROUP BY model_name
+ORDER BY SUM(price) DESC;
+
+SELECT *, 
+SUM(price) AS 'Revenue',
+ROUND(1.0 * SUM(price)/ 55795,2) AS '%Revenue'
+FROM purchase
+GROUP BY color
+ORDER BY SUM(price) DESC;
+
+SELECT *, 
+SUM(price) AS 'Revenue',
+ROUND(1.0 * SUM(price)/ 55795,2) AS '%Revenue'
+FROM purchase
+GROUP BY product_id
+ORDER BY SUM(price) DESC;
