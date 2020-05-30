@@ -1,0 +1,44 @@
+-- Top 25 Schools
+SELECT COUNT(email_domain), email_domain
+FROM users
+LEFT JOIN progress
+ON users.user_id = progress.user_id
+GROUP BY email_domain
+ORDER BY 1 DESC
+LIMIT 25;
+-- Learners Located in New York
+SELECT COUNT(email_domain)
+FROM users
+LEFT JOIN progress
+ON users.user_id = progress.user_id
+WHERE city = "New York"
+LIMIT 20;
+-- Learners Who uses Mobile_App
+SELECT COUNT(mobile_app)
+FROM users
+WHERE mobile_app = "mobile-user";
+-- Sign Up Counts for each hour
+SELECT COUNT(sign_up_at),strftime("%H",sign_up_at) AS sign_up_hours
+FROM users
+GROUP BY 2
+ORDER BY 2 DESC
+LIMIT 20;
+-- Different Schools prefer different courses?
+SELECT email_domain,learn_cpp,learn_sql, learn_html,learn_javascript, learn_java
+FROM users
+JOIN progress
+ON users.user_id = progress.user_id
+GROUP BY email_domain
+LIMIT 20;
+-- What Courses are the Chicago students taking?
+SELECT city,learn_cpp,learn_sql,learn_html,learn_javascript,learn_java
+FROM users
+LEFT JOIN progress
+ON users.user_id = progress.user_id
+WHERE city = "Chicago";
+-- What Courses are the New Yorker Students taking?
+SELECT city, learn_cpp,learn_sql,learn_html,learn_javascript,learn_java
+FROM users
+LEFT JOIN progress
+ON users.user_id = progress.user_id
+WHERE city = "New York";
