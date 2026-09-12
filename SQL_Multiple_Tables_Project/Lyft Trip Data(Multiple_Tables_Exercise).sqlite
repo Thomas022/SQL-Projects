@@ -1,0 +1,63 @@
+Lyft Trip Data
+Let’s practice what we learned about joins by combining rows from different tables.
+
+Suppose you are a Data Analyst at Lyft, a ride-sharing platform. For a project, you were given three tables:
+
+trips: trips information
+riders: user data
+cars: autonomous cars
+
+#Examine the three tables
+SELECT * FROM trips;
+
+SELECT * FROM riders;
+
+SELECT * FROM cars;
+
+#Simple cross_join
+
+SELECT *
+FROM riders
+ CROSS JOIN cars;
+
+#Left_join creating a Trip Log
+SELECT *
+FROM trips
+ LEFT JOIN riders
+ ON trips.rider_id =
+ riders.id;
+
+#Inner_join creating link between the trips and cars list
+SELECT *
+FROM trips
+ JOIN cars
+ ON trips.car_id =
+ cars.id;
+
+#Stacking the new Table on top of the older one
+SELECT *
+FROM riders
+ UNION
+ SELECT *
+ FROM riders2;
+
+#What is the avg cost for a trip?
+SELECT AVG(cost)
+ FROM trips;
+
+#Find all the riders who have used Lyft less than 500 times
+SELECT *
+FROM riders
+ WHERE total_trips < 500;
+
+#Calculating number of active cars
+SELECT COUNT(*)
+FROM cars
+ WHERE status = 
+ 'active';
+#Querry for the two cars with the most trips_completed
+SELECT *
+FROM cars
+ ORDER BY trips_completed DESC
+ LIMIT 2;
+ 
