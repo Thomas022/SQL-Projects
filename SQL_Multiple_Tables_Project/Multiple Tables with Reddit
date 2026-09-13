@@ -1,0 +1,97 @@
+Multiple Tables with Reddit
+For this project, you’ll be working as a Data Analyst who will be examining some fictional data from Reddit, a social news aggregation, content rating site.
+
+On Reddit, users can create posts with content such as text, media, and links to other websites. Users can post content to different communities known as subreddits, which focus on a particular topic. Users can then rate others’ content by upvoting or downvoting them, and each post will show its total cumulative score.
+
+For this task you were given three tables:
+
+users: users data
+posts: posts information
+subreddits: information about subreddits
+
+
+#Task 1 create a felling regardings the tables and collumns
+select *
+from users
+limit 10;
+
+select *
+from posts
+limit 10;
+
+select *
+from subreddits
+limit 10;
+
+#Task 2 users.id = posts.user_id or subreddit.id = post.subreddit_id
+
+#Task3 query to count how many different subreddits there are
+
+select count(*) as subreddit_count
+from subreddits;
+
+#Task4 writing queries in order to figure out some information
+
+select id, username, max(score) as highest_score
+from users;
+
+select id, title, user_id, max(score) as highest_post
+from posts;
+
+select name, subscriber_count
+from subreddits
+order by subscriber_count desc
+limit 5;
+
+#Task5 using Joins to find out some more information regarding the tables
+
+select users.username,
+count(posts.id) as posts_made
+from users
+left join posts on users.id = posts.user_id
+group by users.id
+order by posts_made desc;
+
+#Task6 Over time, posts may be removed and users might delete their accounts.
+
+select *
+from posts
+inner join users
+  on posts.user_id = users.id;
+
+#Task7 some new post have been added to Reddit!
+
+select *
+from posts
+union
+select *
+from posts2;
+
+#Task8 Now you need to find out which sebreddits have the most popuplar posts.
+
+with popular_posts as (
+  select *
+  from posts where score >= 5000
+)
+select subreddits.name, popular_posts.title, popular_posts.score
+from subreddits
+inner join popular_posts
+  on subreddits.id = popular_posts.subreddit_id
+  order by popular_posts.score desc;
+
+#Task 9 Next, you need to find out the highest scoring post for each subreddit.
+
+select posts.title, subreddits.name as subreddit_name, max(posts.score) as highest_score
+from posts
+inner join subreddits on posts.subreddit_id = subreddits.id
+group by subreddits.id;
+
+#Task10 Finally, you need to write a query to calculate the average score of all the posts for each subreddit.
+
+select subreddits.name, avg(posts.score) as average_score
+from subreddits
+inner join posts
+  on subreddits.id = posts.subreddit_id
+group by subreddits.name
+order by average_score desc;
+
