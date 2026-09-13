@@ -1,0 +1,59 @@
+Welp
+To practice what you’ve learned about joining multiple tables, you are going to use data from an exciting app called Welp. Users love Welp because it allows them to leave reviews of businesses in their city and see how other people reviewed the businesses.
+
+For this project, you will be working with two tables:
+
+places
+reviews
+
+#Task 5 Seting up the tables and collummns:
+
+select places.name, places.average_rating, reviews.username, reviews.rating, reviews.review_date, reviews.note
+from places
+inner join reviews
+  on places.id = reviews.place_id;
+
+#Task 6 Query with a left join:
+
+select places.name, places.average_rating, reviews.username, reviews.rating, reviews.review_date, reviews.note
+from places
+left join reviews
+  on places.id = reviews.place_id;
+
+#Task 7 query to find all the id of places that currently do not have any reviews in our reviews table:
+
+select places.id, places.name
+from places
+left join reviews
+  on places.id = reviews.place_id
+where reviews.place_id is null;
+
+#Task 8 write a query using with clause to select all the reviews that happenend in 2020. join th palces to your with query to see a log of all reviews from 2020:
+
+with reviews_2020 as (
+  select *
+  from reviews
+  where strftime("%Y" , review_date) = "2020"
+)
+select *
+from places
+inner join reviews_2020
+  on places.id = reviews_2020.place_id;
+
+#Task 9 a query that finds the reviewer with the most reviews that are below the average rating for places:
+
+with avg_rating as(
+  select avg(average_rating) as avg
+  from places
+)
+select reviews.username, count(*) as num_reviews
+from places
+inner join reviews
+  on places.id = reviews.place_id
+cross join avg_rating
+where places.average_rating <= avg_rating.avg
+group by reviews.username
+order by num_reviews desc
+limit 5;
+
+
