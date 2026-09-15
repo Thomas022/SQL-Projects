@@ -1,0 +1,81 @@
+#Learning about the Dataset
+SELECT * 
+from chat
+limit 20;
+
+select *
+from video_play
+limit 20;
+
+#Looking for unique values
+SELECT DISTINCT game
+from video_play
+ORDER BY game;
+
+SELECT DISTINCT channel
+from video_play
+ORDER BY channel;
+
+#Using Aggregate functions
+SELECT game, count(*) as viewers
+from video_play
+group BY game
+order BY viewers desc;
+
+SELECT country, count(*) as viewers
+from video_play
+where game = 'League of Legends'
+GROUP BY country
+order by viewers desc;
+
+SELECT player, count(*) as streamers
+from video_play
+GROUP by player
+order by streamers desc;
+
+#Creating a columm for games genre names
+ SELECT game,
+         CASE
+             WHEN game IN ('League of Legends', 'Dota 2', 'Heroes of the Storm')
+                 THEN 'MOBA'
+             WHEN game = 'Counter-Strike: Global Offensive'
+                 THEN 'FPS'
+             WHEN game IN ('DayZ', 'ARK: Survival Evolved')
+                 THEN 'Survival'
+             ELSE 'Other'
+         END AS genre
+  FROM video_play
+  GROUP BY game
+  ORDER BY game;
+ 
+ #Formatting Dates
+  SELECT strftime('%H', time) AS hour,
+         COUNT(*) AS views
+  FROM video_play
+  WHERE country = 'BR'
+  GROUP BY strftime('%H', time)
+  ORDER BY hour;
+  
+  select *
+  from video_play
+  join chat
+  	on video_play.device_id = chat.device_id;
+ 
+ 
+ # Bonus TASK:Chat participation by game: Find which games have the highest percentage of
+    viewers who chat.
+   SELECT
+      s.game,
+      COUNT(DISTINCT s.device_id) AS viewers,
+      COUNT(DISTINCT c.device_id) AS viewers_who_chat,
+      ROUND(
+          100.0 * COUNT(DISTINCT c.device_id)
+          / NULLIF(COUNT(DISTINCT s.device_id), 0),
+          2
+      ) AS chat_participation_pct
+  FROM video_play AS s
+  LEFT JOIN chat AS c
+      ON s.device_id = c.device_id
+      AND s.game = c.game
+  GROUP BY s.game
+  ORDER BY chat_participation_pct DESC;
